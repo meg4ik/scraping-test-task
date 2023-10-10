@@ -9,6 +9,7 @@ HEADERS = {
         'User-Agent':'Mozilla/5.0 (iPad; CPU OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/87.0.4280.77 Mobile/15E148 Safari/604.1',
         'Accept':'*/*',
         'Accept-Encoding':'gzip, deflate, br',
+        'Connection':'keep-alive'
     }
 
 
@@ -37,7 +38,6 @@ def parse_script(soup_obj):
     data = {
         "Name":[],
         "Price":[],
-        "Description":[],
         "Page link":[],
         "Image link":[]
     }
@@ -79,22 +79,8 @@ def parse_script(soup_obj):
 
             data["Price"].append(price)
 
-            #Description
-
-            req = requests.get("https://www.amazon.com/Maxell-High-Quality-Headphones-Adjustable-Lightweight/dp/B00006JPRN/ref=sr_1_2_mod_primary_new?qid=1696971715&s=electronics&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D&sr=1-2", HEADERS)
-
-            page_name = product_href.split("//")[2].split("/")[0]
-
-            with open(f"{page_name}.html", "w") as file:
-                file.write(req.text)
-
-            data["Description"].append('')
-
-            
     except Exception as e:
         print(e)
-
-
 
     return data
 
