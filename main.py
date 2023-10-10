@@ -48,12 +48,15 @@ def parse_script(soup_obj):
             product = item.find('div').find('div').find('div').find('div')
             product_links = product.find(class_="s-product-image-container").find('span')
 
+            #Page link
             product_href = f"https://www.amazon.com/{product_links.find('a').get('href')}"
             data["Page link"].append(product_href)
 
+            #Image link
             product_src = product_links.find("div").find("img").get("src")
             data["Image link"].append(product_src)
 
+            #Name
             product_name = product.find(class_="s-title-instructions-style").find('a')
             data["Name"].append([product_name.get_text() if product_name else ""][0])
 
@@ -95,9 +98,7 @@ def main():
 
     parsed_data = parse_script(soup)
 
-    print(parsed_data)
-
-    # save_data(parsed_data)
+    save_data(parsed_data)
 
 if __name__ == "__main__":
     main()
