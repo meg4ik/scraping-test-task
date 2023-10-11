@@ -6,11 +6,12 @@ Scraping test task
 2. Activate a virtualenv
 3. Install the requirements
 
-4. ```sh
+```sh
 $ python main.py
 ```
 
 Or
+
 ```sh
 $ docker build . -t scraping_test_task:latest
 
