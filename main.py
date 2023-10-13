@@ -3,6 +3,7 @@ import os
 from bs4 import BeautifulSoup
 import pandas as pd
 from datetime import datetime
+from time import sleep
 
 HEADERS = {
         'Content-Type':'application/json',
@@ -38,6 +39,7 @@ def parse_script(soup_obj):
     data = {
         "Name":[],
         "Price":[],
+        "Description":[],
         "Page link":[],
         "Image link":[]
     }
@@ -82,6 +84,36 @@ def parse_script(soup_obj):
 
             data["Price"].append(price)
 
+            if not os.path.exists("description_pages"):
+                os.makedirs("description_pages")
+
+            page_name = product_href.split("//")[2].split("/")[0]
+
+            if not os.path.exists(f"description_pages/{page_name}.html"):
+                sleep(0.1)
+                try:
+                    req = requests.get(product_href, headers=HEADERS)
+
+                    with open(f"description_pages/{page_name}.html", "w", encoding="utf-8") as file:
+                        file.write(req.text)
+                except:
+                    data["Description"].append("")
+
+            if os.path.exists(f"description_pages/{page_name}.html"):
+
+                with open(f"description_pages/{page_name}.html", "r", encoding="utf-8") as file:
+                    src = file.read()
+
+                soup = BeautifulSoup(src, "lxml")
+
+                description_list = soup.find("div", id="featurebullets_feature_div").find("div", id="feature-bullets").find("ul", class_=["a-unordered-list", "a-vertical", "a-spacing-mini"]).find_all("li")
+                li_list = ""
+                for li in description_list:
+                    description = li.find("span")
+                    li_list+=f"- {description.text}; "
+                
+                data["Description"].append(li_list)
+            
     except Exception as e:
         print(e)
 
@@ -91,7 +123,7 @@ def main():
     if not os.path.exists("amazon_page.html"):
         get_data()
 
-    with open("amazon_page.html") as file:
+    with open("amazon_page.html", "r", encoding="utf-8") as file:
         src = file.read()
 
     soup = BeautifulSoup(src, "lxml")
